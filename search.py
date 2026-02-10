@@ -68,4 +68,53 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         A list of actions (e.g., ['North', 'South', 'East']) that leads to the goal.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    from util import Queue,PriorityQueue
+    stateQueue = PriorityQueue()                    # stateQueue to manage which states to expand
+    stateQueue.push(problem.getStartState(),0)
+    currState = stateQueue.pop()
+    visited = []                                # Store paths that have been explored
+    tempPath=[]                                 # Store the temporary paths
+    path=[]                                     # Store our final sequence of directions 
+    pathToCurrent=PriorityQueue()               # Queue to store direction to children (currState and pathToCurrent go hand in hand)
+    while not problem.isGoalState(currState):
+        if currState not in visited:
+            visited.append(currState)
+            successors = problem.getSuccessors(currState)
+            for child,direction,cost in successors:
+                tempPath = path + [direction]
+                costToGo = problem.getCostOfActions(tempPath) + heuristic(child,problem)
+                if child not in visited:
+                    stateQueue.push(child,costToGo)
+                    pathToCurrent.push(tempPath,costToGo)
+        currState = stateQueue.pop()
+        path = pathToCurrent.pop()    
+    return path
+    
+    # util.raiseNotDefined()  - Commented out, because we're using this method
+
+# Testing the aStarSearch logic
+if __name__ == '__main__':
+    # Quick test of A* with a simple grid
+    from search import aStarSearch
+    
+    # Create a simple 3x3 grid (False = open, True = wall)
+    simple_grid = [
+        [False, False, False],
+        [False, True, False],
+        [False, False, False]
+    ]
+    
+    problem = PositionSearchProblem(
+        gameState=simple_grid,
+        start=(0, 0),
+        goal=(2, 2)
+    )
+    
+    print("Start:", problem.getStartState())
+    print("Goal:", problem.goal)
+    print("Running A*...")
+    
+    path = aStarSearch(problem, manhattanHeuristic)
+    print("Path found:", path)
+    print("Path length:", len(path))
