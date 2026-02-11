@@ -32,11 +32,31 @@ class PositionSearchProblem(SearchProblem):
             x, y = state
             dx, dy = action
             nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]: # If not a wall
-                nextState = (nextx, nexty)
-                cost = self.costFn(nextState)
-                successors.append( ( nextState, action, cost) )
+            if 0 <= nextx < len(self.walls) and 0 <= nexty < len(self.walls[0]):
+                if not self.walls[nextx][nexty]: # If not a wall
+                    nextState = (nextx, nexty)
+                    cost = self.costFn(nextState)
+                    successors.append( ( nextState, action, cost) )
         return successors
+    
+    def getCostOfActions(self, actions):
+        """
+        Returns the cost of a particular sequence of actions. 
+        """
+        if actions == None: 
+            return 999999
+        x,y= self.getStartState()
+        cost = 0
+        for action in actions:
+            # Calc next position
+            dx, dy = action
+            x, y = int(x + dx), int(y + dy)
+            if x < 0 or x >= len(self.walls) or y < 0 or y >= len(self.walls[0]):
+                return 999999
+            if self.walls[x][y]: 
+                return 999999
+            cost += self.costFn((x,y))
+        return cost
 
 def manhattanHeuristic(position, problem, info={}):
     """
@@ -51,4 +71,4 @@ def manhattanHeuristic(position, problem, info={}):
    # why are we hard returning 0? Commenting This line out
     # return 0
 
-# Testing the logic
+
