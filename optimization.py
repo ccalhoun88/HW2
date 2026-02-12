@@ -57,6 +57,19 @@ def randomRestartHillClimbing(n):
        - Else, RESTART with a new random board.
     """
     "*** YOUR CODE HERE ***"
+    # call random_board(n) to get a random board, then use count_conflicts and get_all_neighbors to implement the algorithm.
+    current_board = random_board(n)
+    while True:
+        current_conflicts = count_conflicts(current_board)
+        if current_conflicts == 0:
+            return current_board  # Solution found
+        neighbors = get_all_neighbors(current_board)
+        best_neighbor = min(neighbors, key=lambda x: x[1])
+        if best_neighbor[1] < current_conflicts:
+            current_board = best_neighbor[0]  # Move to better neighbor
+        else:
+            # No better neighbor, let's run it back.
+            current_board = random_board(n)  # Restart with a new random board
     return []
 
 if __name__ == '__main__':
